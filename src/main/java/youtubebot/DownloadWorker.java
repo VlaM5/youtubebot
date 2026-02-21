@@ -69,14 +69,19 @@ public class DownloadWorker {
      * Выбрасывает исключение если видео недоступно или превышен таймаут.
      */
     public VideoInfo getMetadata(String url) throws Exception {
-        var cmd = List.of(
+        var cmd = new ArrayList<String>();
+        cmd.addAll(List.of(
                 config.ytDlpPath(),
                 "--dump-json",
                 "--no-warnings",
                 "--no-playlist",
-                "--quiet",
-                url
-        );
+                "--quiet"
+        ));
+        if (config.cookiesFile() != null) {
+            cmd.add("--cookies");
+            cmd.add(config.cookiesFile());
+        }
+        cmd.add(url);
 
         String output = runProcess(cmd, "metadata");
         return parseMetadata(output);
@@ -166,6 +171,10 @@ public class DownloadWorker {
         cmd.add("--no-warnings");
         cmd.add("--no-playlist");
         cmd.add("--quiet");
+        if (config.cookiesFile() != null) {
+            cmd.add("--cookies");
+            cmd.add(config.cookiesFile());
+        }
         cmd.add("--ffmpeg-location");
         cmd.add(config.ffmpegPath());
 

@@ -4,6 +4,10 @@ import io.javalin.Javalin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+
 /**
  * Точка входа. Собирает все зависимости вручную и запускает сервер.
  * Никакого DI-фреймворка — для 8 классов это просто не нужно.
@@ -15,6 +19,28 @@ public class App {
     public static void main(String[] args) {
         var config = AppConfig.fromEnv();
         config.validate();
+
+        // Декодируем cookies из переменной окружения и пишем во временный файл
+        String cookiesB64 = System.getenv("YOUTUBE_COOKIES_BASE64");
+        if (cookiesB64 != null && !cookiesB64.isBlank()) {
+            try {
+                Path cookiesFile = Path.of(config.tempDir() + "/cookies.txt");
+                Files.createDirectories(cookiesFile.getParent());
+                Files.write(cookiesFile, Base64.getDecoder().decode(cookiesB64));
+                log.info("Cookies file written to {}", cookiesFile);
+                config = new AppConfig(
+                        config.botToken(), config.botUsername(), config.adminChatIds(),
+                        config.webhookUrl(), config.port(), config.tempDir(),
+                        config.ytDlpPath(), config.ffmpegPath(),
+                        config.maxFileSizeBytes(), config.downloadTimeoutSeconds(),
+                        cookiesFile.toString()
+                );
+            } catch (Exception e) {
+                log.error("Failed to write cookies file: {}", e.getMessage());
+            }
+        }
+
+
 
         // Сборка зависимостей
         var telegramClient = new TelegramClient(config.botToken());

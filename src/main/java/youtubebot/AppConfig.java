@@ -22,7 +22,9 @@ public record AppConfig(
         String  ytDlpPath,
         String  ffmpegPath,
         long    maxFileSizeBytes,
-        int     downloadTimeoutSeconds
+        int     downloadTimeoutSeconds,
+        String cookiesFile      // путь к файлу cookies, null если не задан
+
 ) {
     private static final Logger log = LoggerFactory.getLogger(AppConfig.class);
 
@@ -37,7 +39,8 @@ public record AppConfig(
                 getEnv("YT_DLP_PATH", "/app/bin/yt-dlp"),
                 getEnv("FFMPEG_PATH", "ffmpeg"),
                 Long.parseLong(getEnv("MAX_FILE_SIZE_BYTES", String.valueOf(50L * 1024 * 1024))),
-                Integer.parseInt(getEnv("DOWNLOAD_TIMEOUT_SECONDS", "600"))
+                Integer.parseInt(getEnv("DOWNLOAD_TIMEOUT_SECONDS", "600")),
+                getEnv("COOKIES_FILE", null)
         );
     }
 
