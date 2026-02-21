@@ -19,6 +19,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     curl \
+    python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Создаём директории и пользователя
