@@ -75,7 +75,9 @@ public class DownloadWorker {
                 "--dump-json",
                 "--no-warnings",
                 "--no-playlist",
-                "--quiet"
+                "--no-check-certificate",
+                "--extractor-args", "youtube:skip=dash",
+                "--verbose"   // временно для диагностики, потом заменить на --quiet
         ));
         if (config.cookiesFile() != null) {
             cmd.add("--cookies");
