@@ -9,7 +9,7 @@ RUN mvn dependency:go-offline -q
 
 # Теперь копируем исходники и собираем
 COPY src src/
-RUN mvn clean package -DskipTests -q
+RUN mvn clean package -DskipTests
 
 # ── Финальный образ ─────────────────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-jammy
